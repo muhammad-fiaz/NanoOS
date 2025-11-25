@@ -1,0 +1,40 @@
+# Build artifacts
+.zig-cache/
+zig-out/
+*.o
+*.obj
+*.exe
+*.efi
+*.pdb
+
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+
+# Temporary files
+*.tmp
+*.log
+build_errors.txt
+
+# OS specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
