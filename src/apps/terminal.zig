@@ -1,6 +1,7 @@
 const std = @import("std");
 const Graphics = @import("../gui/graphics.zig").Graphics;
 const Color = @import("../hal/framebuffer.zig").Color;
+const TerminalIcon = @import("../assets/icons/apps/terminal_icon.zig");
 
 pub const TerminalAction = enum {
     None,
@@ -47,8 +48,15 @@ pub const Terminal = struct {
         gfx.drawRect(self.x, self.y, self.width, self.height, Color.Black);
 
         // Welcome banner
-        gfx.drawString(self.x + 5, self.y + 5, "NanoOS Terminal v1.0", Color.NanoAccent, Color.Black);
-        gfx.drawString(self.x + 5, self.y + 17, "Type 'help' for commands", Color.DarkTextSecondary, Color.Black);
+        // Welcome banner with Icon
+        gfx.drawSprite(@intCast(self.x + 5), @intCast(self.y + 5), 32, 32, struct {
+            pub fn getPixel(x: u32, y: u32) Color {
+                return TerminalIcon.getScaledPixel(x, y, 32, 32);
+            }
+        }.getPixel);
+
+        gfx.drawString(self.x + 45, self.y + 10, "NanoOS Terminal v1.0", Color.NanoAccent, Color.Black);
+        gfx.drawString(self.x + 45, self.y + 22, "Type 'help' for commands", Color.DarkTextSecondary, Color.Black);
 
         // Draw output history
         var line_y = self.y + 35;

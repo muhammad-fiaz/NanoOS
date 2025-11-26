@@ -138,6 +138,10 @@ pub const DesktopIcon = struct {
     pub fn draw(self: *DesktopIcon, gfx: *Graphics) void {
         // Draw actual icon from converted image data
         switch (self.app_type) {
+            .Terminal => {
+                const icon = @import("../assets/icons/apps/terminal_icon.zig");
+                gfx.drawSprite(@intCast(self.x), @intCast(self.y), 64, 64, icon.getPixel);
+            },
             .Calculator => {
                 const icon = @import("../assets/icons/apps/calculator_icon.zig");
                 gfx.drawSprite(@intCast(self.x), @intCast(self.y), 64, 64, icon.getPixel);
@@ -286,7 +290,15 @@ pub const Desktop = struct {
         const start_btn_w: u32 = 90;
         const start_btn_h: u32 = 32;
         gfx.drawRoundedRectSlow(start_btn_x, start_btn_y, start_btn_w, start_btn_h, 6, Color.ButtonPrimary);
-        gfx.drawString(start_btn_x + 20, start_btn_y + 10, "NanoOS", Color.White, Color.ButtonPrimary);
+
+        const nano_logo = @import("../assets/icons/system/nano_logo.zig");
+        gfx.drawSprite(@intCast(start_btn_x + 5), @intCast(start_btn_y + 4), 24, 24, struct {
+            pub fn getPixel(x: u32, y: u32) Color {
+                return nano_logo.getScaledPixel(x, y, 24, 24);
+            }
+        }.getPixel);
+
+        gfx.drawString(start_btn_x + 35, start_btn_y + 10, "NanoOS", Color.White, Color.ButtonPrimary);
 
         // System Tray area (right side)
         const tray_width: u32 = 120;
@@ -301,14 +313,76 @@ pub const Desktop = struct {
         for (&self.windows) |*w_opt| {
             if (w_opt.*) |*w| {
                 const item_bg = if (w.active) Color.Selected else Color.DarkSurfaceLight;
-                // Rounded taskbar items
-                gfx.drawRoundedRectSlow(tb_x, start_btn_y, 110, start_btn_h, 6, item_bg);
+                const item_width: u32 = 48;
+                const item_height: u32 = start_btn_h;
+
+                // Rounded taskbar items (Square for icon only)
+                gfx.drawRoundedRectSlow(tb_x, start_btn_y, item_width, item_height, 6, item_bg);
+
                 // Active indicator line
                 if (w.active) {
-                    gfx.drawRect(tb_x + 30, start_btn_y + start_btn_h - 3, 50, 2, Color.NanoAccent);
+                    gfx.drawRect(tb_x + 10, start_btn_y + item_height - 3, item_width - 20, 2, Color.NanoAccent);
                 }
-                gfx.drawString(tb_x + 10, start_btn_y + 10, w.title, Color.White, item_bg);
-                tb_x += 120;
+
+                // Draw App Icon in Taskbar (Centered)
+                const icon_size = 24;
+                const icon_y = start_btn_y + (item_height - icon_size) / 2;
+                const icon_x = tb_x + (item_width - icon_size) / 2;
+
+                switch (w.type) {
+                    .Terminal => {
+                        const icon = @import("../assets/icons/apps/terminal_icon.zig");
+                        gfx.drawSprite(@intCast(icon_x), @intCast(icon_y), icon_size, icon_size, struct {
+                            pub fn getPixel(x: u32, y: u32) Color {
+                                return icon.getScaledPixel(x, y, 24, 24);
+                            }
+                        }.getPixel);
+                    },
+                    .Calculator => {
+                        const icon = @import("../assets/icons/apps/calculator_icon.zig");
+                        gfx.drawSprite(@intCast(icon_x), @intCast(icon_y), icon_size, icon_size, struct {
+                            pub fn getPixel(x: u32, y: u32) Color {
+                                return icon.getScaledPixel(x, y, 24, 24);
+                            }
+                        }.getPixel);
+                    },
+                    .Editor => {
+                        const icon = @import("../assets/icons/apps/editor_icon.zig");
+                        gfx.drawSprite(@intCast(icon_x), @intCast(icon_y), icon_size, icon_size, struct {
+                            pub fn getPixel(x: u32, y: u32) Color {
+                                return icon.getScaledPixel(x, y, 24, 24);
+                            }
+                        }.getPixel);
+                    },
+                    .FileManager => {
+                        const icon = @import("../assets/icons/apps/files_icon.zig");
+                        gfx.drawSprite(@intCast(icon_x), @intCast(icon_y), icon_size, icon_size, struct {
+                            pub fn getPixel(x: u32, y: u32) Color {
+                                return icon.getScaledPixel(x, y, 24, 24);
+                            }
+                        }.getPixel);
+                    },
+                    .Settings => {
+                        const icon = @import("../assets/icons/apps/settings_icon.zig");
+                        gfx.drawSprite(@intCast(icon_x), @intCast(icon_y), icon_size, icon_size, struct {
+                            pub fn getPixel(x: u32, y: u32) Color {
+                                return icon.getScaledPixel(x, y, 24, 24);
+                            }
+                        }.getPixel);
+                    },
+                    .About => {
+                        const icon = @import("../assets/icons/apps/about_icon.zig");
+                        gfx.drawSprite(@intCast(icon_x), @intCast(icon_y), icon_size, icon_size, struct {
+                            pub fn getPixel(x: u32, y: u32) Color {
+                                return icon.getScaledPixel(x, y, 24, 24);
+                            }
+                        }.getPixel);
+                    },
+                    else => {},
+                }
+
+                // No text
+                tb_x += item_width + 8;
             }
         }
 

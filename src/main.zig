@@ -164,9 +164,22 @@ fn drawLoadingScreen(gfx: *Graphics, kernel: *Kernel) void {
     gfx.drawGradientBackground();
 
     // Logo
+    // Logo
+    const logo_img = @import("assets/icons/system/nano_logo.zig");
+    const logo_w = 64;
+    const logo_h = 64;
+    const logo_x_img = cx - (logo_w / 2);
+    const logo_y_img = cy - 100;
+
+    gfx.drawSprite(@intCast(logo_x_img), @intCast(logo_y_img), logo_w, logo_h, struct {
+        pub fn getPixel(x: u32, y: u32) Color {
+            return logo_img.getScaledPixel(x, y, 64, 64);
+        }
+    }.getPixel);
+
     const logo = "NanoOS";
     const logo_x = cx - (@as(u32, @intCast(logo.len)) * 4);
-    gfx.drawString(logo_x, cy - 60, logo, Color.White, null);
+    gfx.drawString(logo_x, cy - 20, logo, Color.White, null);
 
     // Version
     const version = "Version 0.0.0";

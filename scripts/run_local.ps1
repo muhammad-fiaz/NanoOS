@@ -56,5 +56,5 @@ else {
 # 5. Run
 Write-Host "Starting QEMU with BIOS: $biosPath"
 # Using -drive if=pflash is more robust for some OVMF builds than -bios
-$runCmd = "$qemu -drive if=pflash,format=raw,readonly=on,file=`"$biosPath`" -drive format=raw,file=fat:rw:zig-out -net none -serial stdio"
+$runCmd = "$qemu -drive if=pflash,format=raw,readonly=on,file=`"$biosPath`" -drive format=raw,file=fat:rw:zig-out -net none -serial stdio -usb -device usb-tablet -device usb-kbd"
 Invoke-Expression $runCmd
